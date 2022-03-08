@@ -1,12 +1,19 @@
 import { Canvas, useFrame, useThree } from "@react-three/fiber"
-import { Physics, usePlane, useSphere } from "@react-three/cannon"
-import { Stats } from "@react-three/drei"
+import { Physics, useBox, usePlane, useSphere } from "@react-three/cannon"
+import { Backdrop, Stats, useGLTF } from "@react-three/drei"
+import { useRef, useEffect, useState } from "react";
+import * as THREE from 'three';
 
 export default function Dice() {
+  const [roll, setRoll] = useState(false);
   return (
+    <>
+    <div style={{position: "fixed", right: 0, width: 200, height: 30, color: "white", zIndex: 10, margin: 10}}>
+      <button onClick={() => {setRoll(!roll)}}>Dice</button>
+    </div>
+    
     <Canvas shadows gl={{ stencil: false, depth: false, alpha: false, antialias: false }} camera={{ position: [0, 0, 20], fov: 50, near: 17, far: 40 }}>
-      <fog attach="fog" args={["red", 10, 40]} />
-      <color attach="background" args={["#333333"]} />
+      <color attach="background" args={["#000000"]} />
       <ambientLight intensity={2} />
       <directionalLight position={[-10, -10, -5]} intensity={0.5} />
       <directionalLight
@@ -23,22 +30,43 @@ export default function Dice() {
         <group position={[0, 0, -10]}>
           <Mouse />
           <Borders />
-          <InstancedSpheres />
+          <DiceBox roll={roll} setRoll={setRoll}/>
         </group>
       </Physics>
       <Stats />
     </Canvas>
+    </>
   )
 }
 
-function InstancedSpheres({ count = 200 }) {
+function DiceBox({roll, setRoll}) {
+  const { nodes, materials } = useGLTF('../../model/dice.gltf');
   const { viewport } = useThree()
-  const [ref] = useSphere((index) => ({ mass: 100, position: [4 - Math.random() * 8, viewport.height, 0, 0], args: [1.1] }))
+  const [ref, api] = useBox(() => ({ mass: 100, position: [4 - Math.random() * 8, viewport.height, 0, 0], args: [2, 2, 2], friction: 0.4 }));
+  const mat = useRef();
+  const mat2 = useRef();
+
+  useEffect(() => {
+    if (roll) {
+      api.position.set(0,0,0);
+      setRoll(false);
+    }
+  }, [roll, setRoll]);
+
+  useEffect(() => {
+    mat.current.color = new THREE.Color('green');
+    mat2.current.color = new THREE.Color('black');
+  }, []);
+  
   return (
-    <instancedMesh ref={ref} castShadow receiveShadow args={[null, null, count]}>
-      <sphereBufferGeometry args={[1.1, 32, 32]} />
-      <meshLambertMaterial color="#ff7b00" />
-    </instancedMesh>
+    <group ref={ref} dispose={null}>
+      <mesh geometry={nodes.Cube001_1.geometry} material={materials['Material.002']} >
+        <meshStandardMaterial ref={mat} attach="material" opacity={0.5} />
+      </mesh>
+      <mesh geometry={nodes.Cube001_2.geometry} material={materials['Material.001']}>
+        <meshStandardMaterial ref={mat2} attach="material" opacity={0.5} />
+      </mesh>
+    </group>
   )
 }
 
