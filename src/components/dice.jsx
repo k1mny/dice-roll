@@ -1,51 +1,71 @@
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Physics, useBox, usePlane, useSphere } from '@react-three/cannon';
-import { Backdrop, Stats, useGLTF } from '@react-three/drei';
+import { Backdrop, OrbitControls, Stats, useGLTF } from '@react-three/drei';
 import { useRef, useEffect, useState } from 'react';
 import * as THREE from 'three';
+import { Grid, Slider, Box, Button } from '@mui/material';
 
 export default function Dice() {
   const [roll, setRoll] = useState(false);
+  const [numDice, setNumDice] = useState(2);
+
+  const handleSliderChange = (event, newValue) => {
+    setNumDice(newValue);
+  };
+
   return (
     <>
-      <div
+      <Box
         style={{
           position: 'fixed',
           right: 0,
-          width: 200,
-          height: 30,
+          width: 400,
+          height: 200,
           color: 'white',
           zIndex: 10,
           margin: 10,
         }}
       >
-        <button
-          onClick={() => {
-            setRoll(!roll);
-          }}
+        <Grid
+          container
+          spacing={3}
+          direction="column"
+          alignItems="center"
+          width={'100%'}
+          m={0}
         >
-          Dice
-        </button>
-      </div>
+          <Grid item p={0}>
+            <Button
+              variant="contained"
+              onClick={() => {
+                setRoll(!roll);
+              }}
+            >
+              Roll!
+            </Button>
+          </Grid>
+          <Grid item width={'80%'} p={0}>
+            <Slider
+              defaultValue={2}
+              valueLabelDisplay="auto"
+              step={1}
+              value={numDice}
+              onChange={handleSliderChange}
+              min={1}
+              max={10}
+            />
+          </Grid>
+        </Grid>
+      </Box>
 
       <Canvas
         shadows
         gl={{ stencil: false, depth: false, alpha: false, antialias: false }}
-        camera={{ position: [0, 0, 20], fov: 50, near: 17, far: 40 }}
+        camera={{ position: [0, 0, 20], fov: 50, near: 1, far: 100 }}
       >
-        <color attach="background" args={['#000000']} />
+        <color attach="background" args={['#333333']} />
         <ambientLight intensity={2} />
         <directionalLight position={[-10, -10, -5]} intensity={0.5} />
-        <directionalLight
-          castShadow
-          intensity={2}
-          position={[50, 50, 25]}
-          shadow-mapSize={[256, 256]}
-          shadow-camera-left={-10}
-          shadow-camera-right={10}
-          shadow-camera-top={10}
-          shadow-camera-bottom={-10}
-        />
         <Physics
           gravity={[0, -50, 0]}
           defaultContactMaterial={{ restitution: 0.5 }}
@@ -53,10 +73,17 @@ export default function Dice() {
           <group position={[0, 0, -10]}>
             <Mouse />
             <Borders />
-            <DiceBox roll={roll} setRoll={setRoll} />
+            {[...Array(numDice)].map((_, idx) => (
+              <DiceBox key={idx} roll={roll} setRoll={setRoll} />
+            ))}
           </group>
         </Physics>
         <Stats />
+        <OrbitControls
+          enablePan={false}
+          minPolarAngle={Math.PI / 2}
+          maxPolarAngle={Math.PI / 2}
+        />
       </Canvas>
     </>
   );
@@ -68,7 +95,7 @@ function DiceBox({ roll, setRoll }) {
   const { viewport } = useThree();
   const [ref, api] = useBox(() => ({
     mass: 100,
-    position: [4 - Math.random() * 8, viewport.height, 0, 0],
+    position: [4 - Math.random() * 8, 0, 0, 0],
     args: [2, 2, 2],
     friction: 0.4,
   }));
