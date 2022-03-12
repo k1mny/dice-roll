@@ -3,7 +3,6 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Physics, useBox, usePlane, useSphere } from '@react-three/cannon';
 import { Backdrop, OrbitControls, Stats, useGLTF } from '@react-three/drei';
 import { useRef, useEffect, useState } from 'react';
-import * as THREE from 'three';
 import { Grid, Slider, Box, Button } from '@mui/material';
 import {
   useRecoilBridgeAcrossReactRoots_UNSTABLE,
@@ -12,6 +11,7 @@ import {
   useRecoilState,
 } from 'recoil';
 import { useDiceTop } from '../globalState/states';
+import DiceBox from './diceModel';
 
 export default function Dice() {
   const [roll, setRoll] = useState(false);
@@ -104,72 +104,6 @@ export default function Dice() {
         </RecoilBridge>
       </Canvas>
     </>
-  );
-}
-
-function DiceBox({ index, roll = false, setRoll }) {
-  // model from https://www.turbosquid.com/3d-models/3d-6-edged-dice-1301812#
-  const { nodes } = useGLTF('../../model/dice.gltf');
-  const { viewport } = useThree();
-  const [diceTopNum, setDiceTopNum] = useRecoilState(useDiceTop);
-
-  const [ref, api] = useBox(() => ({
-    mass: 100,
-    position: [4 - Math.random() * 8, 0, 0, 0],
-    args: [2, 2, 2],
-    friction: 0.4,
-  }));
-  const mat = useRef();
-  const mat2 = useRef();
-
-  useEffect(() => {
-    if (roll) {
-      api.position.set(0, 0, 0);
-      setRoll(false);
-    }
-  }, [roll, setRoll]);
-
-  useEffect(() => {
-    mat.current.color = new THREE.Color('white');
-    mat2.current.color = new THREE.Color('black');
-  }, []);
-
-  const rotation = useRef([0, 0, 0]);
-  const velocity = useRef([0, 0, 0]);
-  // useFrame(() => {
-  // api.rotation.subscribe((r) => (rotation.current = r));
-  //   api.velocity.subscribe((v) => (velocity.current = v));
-  // });
-  // console.log(rotation.current);
-  // useEffect(() => {
-  //   const unsubscribe = api.rotation.subscribe((r) => (rotation.current = r));
-  //   return unsubscribe;
-  // }, []);
-  // useEffect(() => {
-  //   const unsubscribe = api.velocity.subscribe((v) => (velocity.current = v));
-  //   return unsubscribe;
-  // }, []);
-
-  // useEffect(() => {
-  //   if (velocity && rotation && velocity.current.length > 0) {
-  //     if (
-  //       Math.sqrt(velocity.current.reduce((pre, cur) => pre + cur * cur)) < 0.1
-  //     ) {
-  //       console.log('set: ', rotation.current[0]);
-  //       setDiceTopNum((old) => (old[index] = rotation.current[0]));
-  //     }
-  //   }
-  // }, [rotation, velocity]);
-
-  return (
-    <group ref={ref} dispose={null}>
-      <mesh geometry={nodes.Cube001_2.geometry}>
-        <meshStandardMaterial ref={mat2} attach="material" />
-      </mesh>
-      <mesh geometry={nodes.Cube001_1.geometry}>
-        <meshStandardMaterial ref={mat} attach="material" />
-      </mesh>
-    </group>
   );
 }
 
