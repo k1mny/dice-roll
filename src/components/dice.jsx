@@ -86,6 +86,7 @@ export default function Dice() {
           <Physics
             gravity={[0, -50, 0]}
             defaultContactMaterial={{ restitution: 0.5 }}
+            size={50}
           >
             <group position={[0, 0, -10]}>
               {/* <Mouse /> */}
