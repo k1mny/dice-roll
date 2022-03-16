@@ -12,6 +12,7 @@ import {
 } from 'recoil';
 import { useDiceTop } from '../globalState/states';
 import DiceBox from './diceModel';
+import DiceSvg from './diceFaceSvg';
 
 export default function Dice() {
   const [roll, setRoll] = useState(false);
@@ -71,7 +72,23 @@ export default function Dice() {
             />
           </Grid>
         </Grid>
-        <Grid item>Top: {diceTopNum}</Grid>
+        <Grid
+          item
+          container
+          direction="row"
+          alignItems="center"
+          justifyContent="center"
+          spacing={1}
+        >
+          {diceTopNum
+            .filter((n) => n > 0)
+            .sort((a, b) => a - b)
+            .map((num, idx) => (
+              <Grid key={idx} item flexBasis="10%" container direction="row">
+                <DiceSvg index={num} height={30} width={30} />
+              </Grid>
+            ))}
+        </Grid>
       </Box>
 
       <Canvas
@@ -85,7 +102,7 @@ export default function Dice() {
           <directionalLight position={[-10, -10, -5]} intensity={0.5} />
           <Physics
             gravity={[0, -50, 0]}
-            defaultContactMaterial={{ restitution: 0.5, friction: 0.3 }}
+            defaultContactMaterial={{ restitution: 0.5, friction: 0.1 }}
             size={50}
           >
             <group position={[0, 0, -10]}>
@@ -131,7 +148,7 @@ function Borders() {
 }
 
 function Plane({ color, ...props }) {
-  usePlane(() => ({ ...props }));
+  usePlane(() => ({ ...props, friction: 0 }));
   return null;
 }
 
