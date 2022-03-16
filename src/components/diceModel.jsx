@@ -37,8 +37,12 @@ export default function DiceBox({ index, roll = false, setRoll }) {
   const velocity = useRef([0, 0, 0]);
 
   useLayoutEffect(() => {
-    api.velocity.subscribe((v) => (velocity.current = v));
-    api.rotation.subscribe((r) => (rotation.current = r));
+    const unsub = api.velocity.subscribe((v) => (velocity.current = v));
+    const unsub2 = api.rotation.subscribe((r) => (rotation.current = r));
+    return () => {
+      unsub();
+      unsub2();
+    };
   }, [api]);
 
   useFrame(({ clock }) => {
