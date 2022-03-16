@@ -5,6 +5,7 @@ import { useEffect, useLayoutEffect, useRef } from 'react';
 import { useRecoilState } from 'recoil';
 import * as THREE from 'three';
 import { useDiceTop } from '../globalState/states';
+import Rot2Top from '../logic/diceFace';
 
 export default function DiceBox({ index, roll = false, setRoll }) {
   // model from https://www.turbosquid.com/3d-models/3d-6-edged-dice-1301812#
@@ -57,55 +58,9 @@ export default function DiceBox({ index, roll = false, setRoll }) {
       );
       if (clock.oldTime % 30 === 0) {
         if (Math.sqrt(velNorm) < 1) {
-          let rotIdx = 0;
-          /**
-           * +180 ~ -180
-           *    x  y  z
-           * 1: +-180 - +-180, 0 - 0
-           * 2: -90 0 -
-           * 3: 0 - 90, +-180 - -90
-           * 4: +-180 - 90, 0 - -90
-           * 5: 90 0 -
-           * 6: 0 - +-180, +-180 - 0
-           */
-          const rotX = ((rotation.current[0] / Math.PI) * 180) % 180;
-          const rotY = ((rotation.current[1] / Math.PI) * 180) % 180;
-          const rotZ = ((rotation.current[2] / Math.PI) * 180) % 180;
-          const eps = 20;
-          if (
-            (Math.abs(rotX) < eps && Math.abs(rotZ) < eps) ||
-            (Math.abs(Math.abs(rotX) - 180) < eps &&
-              Math.abs(Math.abs(rotZ) - 180) < eps)
-          ) {
-            rotIdx = 1;
-          } else if (Math.abs(rotX + 90) < eps && Math.abs(rotY) < eps) {
-            rotIdx = 2;
-          } else if (
-            (Math.abs(rotX) < eps && Math.abs(rotZ - 90) < eps) ||
-            (Math.abs(Math.abs(rotX) - 180) < eps && Math.abs(rotZ + 90) < eps)
-          ) {
-            rotIdx = 3;
-          } else if (
-            (Math.abs(Math.abs(rotX) - 180) < eps &&
-              Math.abs(rotZ - 90) < eps) ||
-            (Math.abs(rotX) < eps && Math.abs(rotZ + 90) < eps)
-          ) {
-            rotIdx = 4;
-          } else if (Math.abs(rotX - 90) < eps && Math.abs(rotY) < eps) {
-            rotIdx = 5;
-          } else if (
-            (Math.abs(rotX) < eps && Math.abs(Math.abs(rotZ) - 180) < eps) ||
-            (Math.abs(Math.abs(rotX) - 180) < eps && Math.abs(rotZ) < eps)
-          ) {
-            rotIdx = 6;
-          }
-
-          if (rotIdx === 0) {
-            console.log('x: %.3f, y: %.3f, z: %.3f', rotX, rotY, rotZ);
-          }
-
+          const face = Rot2Top(rotation.current, 20);
           setDiceTopNum((old) =>
-            old.map((t, i, self) => (i === index ? rotIdx : self[i]))
+            old.map((t, i, self) => (i === index ? face : self[i]))
           );
         } else if (diceTopNum[index] !== 0) {
           setDiceTopNum((old) =>
