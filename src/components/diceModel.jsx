@@ -15,8 +15,13 @@ export default function DiceBox({ index, roll = false, setRoll }) {
   const [ref, api] = useBox(() => ({
     mass: 100,
     position: [4 - Math.random() * 8, 0, 0, 0],
+    rotation: [
+      Math.random() * Math.PI,
+      Math.random() * Math.PI,
+      Math.random() * Math.PI,
+    ],
     args: [2, 2, 2],
-    friction: 0.4,
+    friction: 0.2,
   }));
   const mat = useRef();
   const mat2 = useRef();
@@ -65,7 +70,7 @@ export default function DiceBox({ index, roll = false, setRoll }) {
         const rotX = ((rotation.current[0] / Math.PI) * 180) % 180;
         const rotY = ((rotation.current[1] / Math.PI) * 180) % 180;
         const rotZ = ((rotation.current[2] / Math.PI) * 180) % 180;
-        const eps = 10;
+        const eps = 20;
         if (
           (Math.abs(rotX) < eps && Math.abs(rotZ) < eps) ||
           (Math.abs(Math.abs(rotX) - 180) < eps &&
