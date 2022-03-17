@@ -20,7 +20,10 @@ export default function Dice() {
 
   const handleSliderChange = (event, newValue) => {
     if (newValue >= diceTopNum.length) {
-      setDiceTopNum([...diceTopNum, ...Array(newValue - diceTopNum.length)]);
+      setDiceTopNum([
+        ...diceTopNum,
+        ...Array(newValue - diceTopNum.length).fill(0),
+      ]);
     } else {
       setDiceTopNum(diceTopNum.slice(0, newValue - diceTopNum.length));
     }
@@ -55,6 +58,7 @@ export default function Dice() {
               variant="contained"
               onClick={() => {
                 setRoll(!roll);
+                setDiceTopNum([...Array(diceTopNum.length).fill(0)]);
               }}
             >
               Roll!
@@ -80,9 +84,10 @@ export default function Dice() {
           justifyContent="center"
           spacing={1}
         >
-          {diceTopNum
-            .filter((n) => n > 0)
+          {[...diceTopNum]
+            .map((n) => (n === 0 ? 10 : n))
             .sort((a, b) => a - b)
+            .map((n) => (n === 10 ? 0 : n))
             .map((num, idx) => (
               <Grid key={idx} item flexBasis="10%" container direction="row">
                 <DiceSvg index={num} height={30} width={30} />
@@ -102,8 +107,8 @@ export default function Dice() {
           <directionalLight position={[-10, -10, -5]} intensity={0.5} />
           <Physics
             gravity={[0, -50, 0]}
-            defaultContactMaterial={{ restitution: 0.5, friction: 0.1 }}
-            size={50}
+            defaultContactMaterial={{ restitution: 0.5, friction: 0.05 }}
+            size={32}
           >
             <group position={[0, 0, -10]}>
               {/* <Mouse /> */}
@@ -114,11 +119,11 @@ export default function Dice() {
             </group>
           </Physics>
           <Stats />
-          <OrbitControls
+          {/* <OrbitControls
             enablePan={false}
             minPolarAngle={Math.PI / 2}
             maxPolarAngle={Math.PI / 2}
-          />
+          /> */}
         </RecoilBridge>
       </Canvas>
     </>
@@ -148,7 +153,7 @@ function Borders() {
 }
 
 function Plane({ color, ...props }) {
-  usePlane(() => ({ ...props, friction: 0 }));
+  usePlane(() => ({ ...props, friction: 0.1 }));
   return null;
 }
 

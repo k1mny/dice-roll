@@ -56,9 +56,9 @@ export default function DiceBox({ index, roll = false, setRoll }) {
       const velNorm = Math.abs(
         velocity.current.reduce((pre, cur) => pre + cur * cur)
       );
-      if (clock.oldTime % 30 === 0) {
-        if (Math.sqrt(velNorm) < 1) {
-          const face = Rot2Top(rotation.current, 20);
+      if (clock.oldTime % 20 === 0) {
+        if (Math.sqrt(velNorm) < 10) {
+          const face = Rot2Top(rotation.current, 30);
           setDiceTopNum((old) =>
             old.map((t, i, self) => (i === index ? face : self[i]))
           );
