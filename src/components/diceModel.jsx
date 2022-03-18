@@ -6,10 +6,11 @@ import { useRecoilState } from 'recoil';
 import * as THREE from 'three';
 import { useDiceRoll, useDiceTop } from '../globalState/states';
 import Rot2Top from '../logic/diceFace';
+import modelSrc from '../model/dice.gltf?url';
 
 export default function DiceBox({ index }) {
   // model from https://www.turbosquid.com/3d-models/3d-6-edged-dice-1301812#
-  const { nodes, materials } = useGLTF('../../model/dice.gltf');
+  const { nodes, materials } = useGLTF(modelSrc);
   const { viewport } = useThree();
   const [diceTopNum, setDiceTopNum] = useRecoilState(useDiceTop);
   const [roll, setRoll] = useRecoilState(useDiceRoll);
@@ -84,4 +85,4 @@ export default function DiceBox({ index }) {
   );
 }
 
-useGLTF.preload('../../model/dice.gltf');
+// useGLTF.preload(modelSrc);
