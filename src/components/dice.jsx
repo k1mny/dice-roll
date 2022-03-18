@@ -1,14 +1,10 @@
 import React from 'react';
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
+import { Canvas } from '@react-three/fiber';
 import { Physics } from '@react-three/cannon';
-import { Backdrop, OrbitControls, Stats, useGLTF } from '@react-three/drei';
-import { useRef, useEffect, useState } from 'react';
-import { Grid, Slider, Box, Button } from '@mui/material';
+import { Stats } from '@react-three/drei';
 import {
   useRecoilBridgeAcrossReactRoots_UNSTABLE,
   useRecoilValue,
-  useSetRecoilState,
-  useRecoilState,
 } from 'recoil';
 import { useDiceTop } from '../globalState/states';
 import DiceBox from './diceModel';
