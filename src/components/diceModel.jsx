@@ -4,14 +4,15 @@ import { useFrame, useThree } from '@react-three/fiber';
 import { useEffect, useLayoutEffect, useRef } from 'react';
 import { useRecoilState } from 'recoil';
 import * as THREE from 'three';
-import { useDiceTop } from '../globalState/states';
+import { useDiceRoll, useDiceTop } from '../globalState/states';
 import Rot2Top from '../logic/diceFace';
 
-export default function DiceBox({ index, roll = false, setRoll }) {
+export default function DiceBox({ index }) {
   // model from https://www.turbosquid.com/3d-models/3d-6-edged-dice-1301812#
   const { nodes, materials } = useGLTF('../../model/dice.gltf');
   const { viewport } = useThree();
   const [diceTopNum, setDiceTopNum] = useRecoilState(useDiceTop);
+  const [roll, setRoll] = useRecoilState(useDiceRoll);
 
   const [ref, api] = useBox(() => ({
     mass: 10,
