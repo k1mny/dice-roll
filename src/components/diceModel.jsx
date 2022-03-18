@@ -58,17 +58,17 @@ export default function DiceBox({ index }) {
       const velNorm = Math.abs(
         velocity.current.reduce((pre, cur) => pre + cur * cur)
       );
-      if (clock.oldTime % 20 === 0) {
-        if (Math.sqrt(velNorm) < 10) {
-          const face = Rot2Top(rotation.current, 30);
-          setDiceTopNum((old) =>
-            old.map((t, i, self) => (i === index ? face : self[i]))
-          );
-        } else if (diceTopNum[index] !== 0) {
-          setDiceTopNum((old) =>
-            old.map((t, i, self) => (i === index ? 0 : self[i]))
-          );
-        }
+      if (clock.oldTime % 10 === 0) {
+        // if (Math.sqrt(velNorm) < 10) {
+        const face = Rot2Top(rotation.current, 45);
+        setDiceTopNum((old) =>
+          old.map((t, i, self) => (i === index ? face : self[i]))
+        );
+        // } else if (diceTopNum[index] !== 0) {
+        //   setDiceTopNum((old) =>
+        //     old.map((t, i, self) => (i === index ? 0 : self[i]))
+        //   );
+        // }
       }
     }
   });
@@ -85,4 +85,4 @@ export default function DiceBox({ index }) {
   );
 }
 
-// useGLTF.preload(modelSrc);
+useGLTF.preload(modelSrc);
