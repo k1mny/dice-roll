@@ -1,7 +1,6 @@
 import React from 'react';
 import { Canvas } from '@react-three/fiber';
 import { Physics } from '@react-three/cannon';
-import { Stats } from '@react-three/drei';
 import {
   useRecoilBridgeAcrossReactRoots_UNSTABLE,
   useRecoilValue,
@@ -41,7 +40,6 @@ export default function Dice() {
               ))}
             </group>
           </Physics>
-          <Stats />
         </RecoilBridge>
       </Canvas>
     </>
