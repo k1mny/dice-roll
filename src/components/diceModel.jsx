@@ -83,3 +83,5 @@ export default function DiceBox({ index }) {
     </group>
   );
 }
+
+useGLTF.preload('../../model/dice.gltf');
